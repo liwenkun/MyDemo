@@ -24,16 +24,22 @@ plugins {
 // 3. jvm toolchain 和 jdk 这两个概念差不多是等价的，可以互换。
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "me.liwenkun.demo"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags ''
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
     }
 
     buildTypes {
@@ -62,15 +68,15 @@ android {
         // sourceCompatibility 必须小于等于 targetCompatibility，否则 javac 会报错，这两个值分别对应 javac
         // 的 -source 和 -target 选项。javac 并不会和 d8 一样，自动根据 targetCompatibility 对语法语法进行脱糖，
         // 否则 d8 也没有存在的必要了。
-        // 另外，这两个字段需要大于等于 1.8，否则 d8 就会不对源码和库进行语法功能的脱糖处理，因为 d8 认为既然 javac
-        // 都已经把源码编译成了 1.7 版本，就没必要脱糖了，d8 会跳过脱糖直接把 java 字节码转译成 dalvik/art 字节码。
+        // 另外，这两个字段需要大于等于 1.8，否则 d8 就会不对源码和库进行语法功能的脱糖处理，因为 d8 是为了对 Java8 脱糖产生的，如果javac
+        // 都已经把源码编译成了 1.7 及以下版本，d8 就认为就没必要脱糖了，d8 会跳过脱糖直接把 java 字节码转译成 dalvik/art 字节码。
         // 但问题是，即使主库的 target 为 1.7，但某些第三方库的 target 可能为 1.8。由于只有在 api >= 26 的平台上，
-        // 对应的虚拟机才有能用于转译 invokeDynamic 的字节码 invoke-customs。所以 d8 遇到那些 target 为 1.8 的
-        // 第三方库中的 invokeDynamic 指令，无能为力，只能报错：（这段解释是根据现象推测的）
+        // 对应的虚拟机才有能用于转译 invokeDynamic 的字节码 invoke-customs。如果跳过脱糖处理了，转译阶段 d8 遇到那些 target 为 1.8 的
+        // 第三方库中的 invokeDynamic 指令就无能为力了，只能报错：（这段解释是根据现象推测的）
         // invoke-customs are only supported starting with android o (--min-api 26)
-        // 解决办法是，要么让  sourceCompatibility == targetCompatibility > 1.8 让 d8 进行脱糖，要么设置
+        // 解决办法是，要么让  sourceCompatibility == targetCompatibility >= 1.8 让 d8 进行脱糖，要么设置
         // minSdk >= 26，这样 d8 就直接将 invokeDynamic 指令转译成 invoke-customs 指令。
-        //
+        // 参考：https://tech.meituan.com/2019/10/17/android-java-8.html
         // 注意，编译 java 用的依然是 jdk17（在 IDE 中设置的值），只是指定了 -source 和 -target 选项为 1.8 而已
 //        targetCompatibility JavaVersion.VERSION_1_8
 //        sourceCompatibility JavaVersion.VERSION_1_8
@@ -115,12 +121,18 @@ android {
     sourceSets {
         main {
             res {
-                srcDirs 'src\\main\\res', 'src\\main\\res\\layout\\framework'
+                srcDirs 'src\\main\\res', 'src\\main\\framework-res'
             }
         }
     }
     buildFeatures {
         viewBinding true
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
     }
 }
 
@@ -175,8 +187,8 @@ afterEvaluate {
 dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.7.1'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.7.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -184,7 +196,7 @@ dependencies {
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
     implementation libs.kotlin.stdlib
 
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -204,10 +216,16 @@ dependencies {
 
     implementation libs.room.runtime
     kapt libs.room.compiler
+
+    implementation project(path: ':library')
+    implementation project(path: ':library2')
 }
+
+println(android.sourceSets.main.jniLibs.srcDirs)
 
 // 这种定义任务的 dsl 不符合 groovy 的语法, 是 Gradle 定制的 dsl，
 // 通过 TaskDefinitionScriptTransformer 实现，gradle 的语法是 groovy 语法的超集
-task hello(type: Exec) {
-
-}
+//task hello(type: tas) {
+//    println(it)
+//    while(true);
+//}

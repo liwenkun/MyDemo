@@ -2,6 +2,7 @@ package me.liwenkun.demo.resource
 
 import android.os.Bundle
 import android.util.TypedValue
+import android.widget.TextView
 import me.liwenkun.demo.demoframework.DemoBaseActivity
 import me.liwenkun.demo.R
 import me.liwenkun.demo.libannotation.Demo
@@ -17,7 +18,7 @@ class ResourceActivity : DemoBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_resource)
         setSourceCode(source)
 
         val typedValue = TypedValue()
@@ -63,5 +64,14 @@ class ResourceActivity : DemoBaseActivity() {
         ta = obtainStyledAttributes(android.R.style.TextAppearance, intArrayOf(android.R.attr.textSize))
         ta.getValue(0, typedValue)
         ta.recycle()
+
+        findViewById<TextView>(R.id.hello_world2)
+            .setText(me.liwenkun.demo.library.R.string.hello_world)
+        // 虽然 aapt 为主库和子库的同名资源生成了不同的资源索引，但这两个资源索引指向的资源是一样的，都是
+        // 主库的那个资源，子库的资源会被覆盖。安卓同名资源的覆盖规则是：按照依赖关系，被依赖的库中的资源会被依赖的
+        // 库的资源所覆盖，如果两个子库没有依赖关系，那么就看被主库依赖的顺序
+        logInfo("主库 hello_world 资源 id: ${R.string.hello_world}")
+        logInfo("子库1 hello_world 资源 id: ${me.liwenkun.demo.library.R.string.hello_world}")
+        logInfo("子库2 hello_world 资源 id: ${me.liwenkun.demo.library2.R.string.hello_world}")
     }
 }

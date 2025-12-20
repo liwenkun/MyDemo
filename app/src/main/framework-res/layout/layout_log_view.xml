@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/log_view_toolbar"
+        app:title="@string/log"
+        android:background="@drawable/log_view_handle"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
+
+<!--    <TextView-->
+<!--        android:id=""-->
+<!--        android:text=""-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:paddingHorizontal="8dp"-->
+<!--        android:clickable="true"-->
+<!--        android:focusable="true"-->
+<!--         />-->
+
+    <ListView
+        android:id="@+id/logs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/log_view_background"
+        android:divider="@null" />
+
+</LinearLayout>

@@ -29,14 +29,14 @@ open class DemoBaseActivity : AppCompatActivity(), Logger {
     private val closeState: MenuItemState = object : MenuItemState {
         override fun onClick(menuItem: MenuItem) {
             logView.visibility = View.VISIBLE
-            menuItem.setTitle(R.string.open_log_view)
+            menuItem.setTitle(R.string.close_log_view)
             currentLogState = openState
         }
     }
     private val openState: MenuItemState = object : MenuItemState {
         override fun onClick(menuItem: MenuItem) {
             logView.visibility = View.INVISIBLE
-            menuItem.setTitle(R.string.close_log_view)
+            menuItem.setTitle(R.string.open_log_view)
             currentLogState = closeState
         }
     }
