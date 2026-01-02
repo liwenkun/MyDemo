@@ -1,5 +1,6 @@
 package me.liwenkun.demo.customview
 
+import android.R.attr.radius
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -12,6 +13,7 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.SimpleOnPageChangeListener
 import me.liwenkun.demo.R
 import kotlin.math.abs
+import androidx.core.content.withStyledAttributes
 
 class Indicator @JvmOverloads constructor(
     context: Context,
@@ -21,32 +23,31 @@ class Indicator @JvmOverloads constructor(
     private var index = 0
     private var offset = 0f
     private var requiredWidth = 0
-    private val radius: Int
-    private val margin: Int
-    private var focusLength: Int
+    private var radius: Int = 0
+    private var margin: Int = 0
+    private var focusLength: Int = 0
     private val focusedPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val unFocusedPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private var num = 0
 
     init {
-        val typedArray =
-            context.obtainStyledAttributes(attrs, R.styleable.Indicator, defStyleAttr, 0)
-        radius = typedArray.getDimensionPixelSize(R.styleable.Indicator_dotRadius, DEF_RADIUS)
-        margin = typedArray.getDimensionPixelSize(R.styleable.Indicator_dotMargin, DEF_MARGIN)
-        focusLength = typedArray.getDimensionPixelSize(
-            R.styleable.Indicator_focusedDotLength,
-            DEF_FOCUS_LENGTH
-        )
-        focusLength = (radius * 2).coerceAtLeast(focusLength)
-        val focusedDotColor =
-            typedArray.getColor(R.styleable.Indicator_focusedDotColor, DEF_FOCUSED_DOT_COLOR)
-        val unfocusedDotColor =
-            typedArray.getColor(R.styleable.Indicator_unfocusedDotColor, DEF_UNFOCUSED_DOT_COLOR)
-        focusedPaint.color = focusedDotColor
-        focusedPaint.style = Paint.Style.FILL_AND_STROKE
-        unFocusedPaint.color = unfocusedDotColor
-        unFocusedPaint.style = Paint.Style.FILL_AND_STROKE
-        typedArray.recycle()
+        context.withStyledAttributes(attrs, R.styleable.Indicator, defStyleAttr, 0) {
+            radius = getDimensionPixelSize(R.styleable.Indicator_dotRadius, DEF_RADIUS)
+            margin = getDimensionPixelSize(R.styleable.Indicator_dotMargin, DEF_MARGIN)
+            focusLength = getDimensionPixelSize(
+                R.styleable.Indicator_focusedDotLength,
+                DEF_FOCUS_LENGTH
+            )
+            focusLength = (radius * 2).coerceAtLeast(focusLength)
+            val focusedDotColor =
+                getColor(R.styleable.Indicator_focusedDotColor, DEF_FOCUSED_DOT_COLOR)
+            val unfocusedDotColor =
+                getColor(R.styleable.Indicator_unfocusedDotColor, DEF_UNFOCUSED_DOT_COLOR)
+            focusedPaint.color = focusedDotColor
+            focusedPaint.style = Paint.Style.FILL_AND_STROKE
+            unFocusedPaint.color = unfocusedDotColor
+            unFocusedPaint.style = Paint.Style.FILL_AND_STROKE
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

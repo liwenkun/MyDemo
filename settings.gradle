@@ -37,7 +37,7 @@ dependencyResolutionManagement {
             version("kotlin", "1.8.21")
             version("dagger", "2.46.1")
             version("retrofit", "2.9.0")
-            version("agp", "8.0.2")
+            version("agp", "8.6.0")
 
             library("room-runtime", "androidx.room", "room-runtime").versionRef("room")
             library("room-compiler", "androidx.room", "room-compiler").versionRef("room")
@@ -52,6 +52,7 @@ dependencyResolutionManagement {
 
             library("retrofit", "com.squareup.retrofit2", "retrofit").versionRef("retrofit")
             library("retrofit-converter", "com.squareup.retrofit2", "converter-gson").versionRef("retrofit")
+            library("retrofit-adapter", "com.squareup.retrofit2", "adapter-rxjava2").versionRef("retrofit")
 
             plugin("android-application", "com.android.application").versionRef("agp")
             plugin("android-library", "com.android.library").versionRef("agp")
@@ -62,4 +63,4 @@ dependencyResolutionManagement {
 include ':libcompiler'
 include ':libannotation'
 include ':app'
-rootProject.name = "Demo"
+rootProject.name = "AndroidDemo"

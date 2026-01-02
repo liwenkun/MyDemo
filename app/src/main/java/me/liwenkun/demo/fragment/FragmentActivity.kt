@@ -10,12 +10,16 @@ import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.doOnNextLayout
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.liwenkun.demo.R
 import me.liwenkun.demo.demoframework.DemoBaseActivity
 import me.liwenkun.demo.libannotation.Demo
-import me.liwenkun.demo.utils.DimensionUtils.px
+import me.liwenkun.demo.utils.post
+import me.liwenkun.demo.utils.px
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
@@ -40,12 +44,12 @@ class FragmentActivity : DemoBaseActivity() {
                 (holder.itemView as TextView).text = TransactionOp.values()[position].name
                 holder.itemView.setOnClickListener { v: View? ->
                     currentSelectedOp = TransactionOp.values()[position]
-                    notifyDataSetChanged()
+                    notifyItemRangeChanged(0, TransactionOp.values().size)
                 }
                 if (currentSelectedOp === TransactionOp.values()[position]) {
                     holder.itemView.setBackgroundColor(Color.RED)
                 } else {
-                    holder.itemView.setBackgroundColor(-0x666667)
+                    holder.itemView.setBackgroundColor(Color.GRAY)
                 }
             }
 
@@ -61,9 +65,9 @@ class FragmentActivity : DemoBaseActivity() {
                 viewType: Int
             ): RecyclerView.ViewHolder {
                 val textView = AppCompatTextView(this@FragmentActivity)
-                textView.setBackgroundColor(-0x111112)
+                textView.setBackgroundColor(Color.LTGRAY)
                 val layoutParams = MarginLayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    parent.width / (TAGS.size + 1),
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 layoutParams.rightMargin = px(5)
@@ -78,9 +82,9 @@ class FragmentActivity : DemoBaseActivity() {
                     if (currentSelectedOp != null) {
                         transactionHelper.addTransactionOp(currentSelectedOp!!, TAGS[position])
                         currentSelectedOp = null
-                        optionsAdapter.notifyDataSetChanged()
+                        optionsAdapter.notifyItemRangeChanged(0, TransactionOp.values().size)
                     } else {
-                        Toast.makeText(this@FragmentActivity, "請先選擇操作", Toast.LENGTH_SHORT)
+                        Toast.makeText(this@FragmentActivity, "请先选择操作", Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
@@ -129,12 +133,16 @@ class FragmentActivity : DemoBaseActivity() {
         setContentView(R.layout.activity_fragment)
 
         val opOptions = findViewById<RecyclerView>(R.id.rv_options)
+        opOptions.itemAnimator = null
         opOptions.adapter = optionsAdapter
         opOptions.layoutManager =
             LinearLayoutManager(this@FragmentActivity, LinearLayoutManager.HORIZONTAL, false)
 
         val tags = findViewById<RecyclerView>(R.id.rv_tags)
-        tags.adapter = tagsAdapter
+//        tags.adapter = tagsAdapter
+        post {
+            tags.adapter = tagsAdapter
+        }
         tags.layoutManager =
             LinearLayoutManager(this@FragmentActivity, LinearLayoutManager.HORIZONTAL, false)
 
@@ -151,16 +159,22 @@ class FragmentActivity : DemoBaseActivity() {
                 transactionHelper.commit(cbAddToBackStack.isChecked)
                 Handler(mainLooper).post { logFragmentInfo() }
             } else {
-                Toast.makeText(this@FragmentActivity, "操作隊列為空", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@FragmentActivity, "操作队列为空", Toast.LENGTH_SHORT).show()
             }
         }
         findViewById<View>(R.id.btn_clear_op).setOnClickListener { transactionHelper.cleanTransactionOp() }
     }
 
+    override fun onPostResume() {
+        val tags = findViewById<RecyclerView>(R.id.rv_tags)
+        super.onPostResume()
+
+
+    }
+
     private fun logFragmentInfo() {
         if (GET_ACTIVE_FRAGMENT != null) {
             try {
-                // noinspection unchecked
                 val active = GET_ACTIVE_FRAGMENT.invoke(
                     supportFragmentManager
                 ) as List<*>
