@@ -35,17 +35,17 @@ open class DemoBaseActivity : BaseActivity(), Logger {
     private val closeState: MenuItemState = object : MenuItemState {
         override val desc = R.string.open_log_view
         override fun onClick(menuItem: MenuItem) {
-            currentLogState = openState
             logView.visibility = View.VISIBLE
-            menuItem.setTitle(currentLogState.desc)
+            menuItem.setTitle(R.string.close_log_view)
+            currentLogState = openState
         }
     }
     private val openState: MenuItemState = object : MenuItemState {
         override val desc = R.string.close_log_view
         override fun onClick(menuItem: MenuItem) {
             logView.visibility = View.INVISIBLE
+            menuItem.setTitle(R.string.open_log_view)
             currentLogState = closeState
-            menuItem.setTitle(currentLogState.desc)
         }
     }
     private val starState: MenuItemState = object : MenuItemState {

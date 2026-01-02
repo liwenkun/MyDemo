@@ -2,27 +2,15 @@ pluginManagement {
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public' }
         maven { url 'https://maven.aliyun.com/repository/google' }
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
         google()
+        gradlePluginPortal()
         mavenCentral()
     }
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id("org.gradle.toolchains.foojay-resolver-convention") version("1.0.0")
 }
-
-//toolchainManagement {
-//    jvm {
-//        javaRepositories {
-//            repository('foojay') {
-//                resolverClass = org.gradle.toolchains.foojay.FoojayToolchainResolver
-//            }
-//        }
-//    }
-//}
 
 dependencyResolutionManagement {
     repositories {
@@ -63,4 +51,7 @@ dependencyResolutionManagement {
 include ':libcompiler'
 include ':libannotation'
 include ':app'
+include ':library'
+include ':library2'
+
 rootProject.name = "AndroidDemo"

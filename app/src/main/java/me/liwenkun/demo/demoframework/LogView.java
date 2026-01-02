@@ -51,7 +51,7 @@ public class LogView extends FrameLayout {
     private final List<LogItem> logs = new ArrayList<>();
     private ArrayAdapter<LogItem> logAdapter;
 
-    List<String> tags = new ArrayList<String>(){{
+    List<String> tags = new ArrayList<>(){{
         add("默认");
     }};
     String selectedTag = "";
@@ -136,7 +136,7 @@ public class LogView extends FrameLayout {
                 requestLayout();
             }
         });
-        logAdapter = new ArrayAdapter<LogItem>(getContext(),
+        logAdapter = new ArrayAdapter<>(getContext(),
                 R.layout.layout_log_item, R.id.log, logs) {
             @NonNull
             @Override
@@ -192,13 +192,13 @@ public class LogView extends FrameLayout {
         Toolbar logViewToolbar = findViewById(R.id.log_view_toolbar);
         Spinner spinner = new Spinner(getContext());
         spinner.setGravity(Gravity.END);
-        tagAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1,
-                new ArrayList<>(tags)){
+        tagAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1,
+                new ArrayList<>(tags)) {
             @NonNull
             @Override
             public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                ((TextView) view).setGravity(Gravity.END|Gravity.CENTER_VERTICAL);
+                ((TextView) view).setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
                 return view;
             }
         };

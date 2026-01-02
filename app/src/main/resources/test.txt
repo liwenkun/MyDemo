@@ -1,0 +1,1 @@
+这是来自 /src/main/resources 下 test.txt 文件的内容，这个文件会被打包到 apk 的顶层目录下
