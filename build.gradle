@@ -9,8 +9,18 @@ plugins {
     alias(libs.plugins.kapt) apply false
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
+}
+
+tasks.register('testTask') {
+    doLast {
+        def runtime = ManagementFactory.getRuntimeMXBean()
+        def name = runtime.name
+        def pid = name.substring(0, name.indexOf("@")).toLong()
+        println("gradle 任务 所在进程 Pid: $pid")
+        println("gradle 任务 vm 版本: ${System.getProperty("java.version")}")
+    }
 }
 
 def runtime = ManagementFactory.getRuntimeMXBean()

@@ -8,4 +8,19 @@
         <attr name="unfocusedDotColor" format="color|reference" />
     </declare-styleable>
 
+    <declare-styleable name="MyFlowLayout">
+        <attr name="lineSpacing" format="dimension|reference" />"
+        <attr name="itemSpacing" format="dimension|reference" />"
+        <attr name="constrainChildHeight" format="boolean" />
+        <attr name="overflowBehavior" format="enum">
+            <enum name="keep" value="0" />
+            <enum name="truncate" value="1" />
+            <enum name="skip" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="MyFlowLayout_LayoutParams">
+        <attr name="android:layout_gravity" />/>
+    </declare-styleable>
+
 </resources>

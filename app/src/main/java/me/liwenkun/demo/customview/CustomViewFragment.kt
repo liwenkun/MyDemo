@@ -2,29 +2,35 @@ package me.liwenkun.demo.customview
 
 import android.graphics.Outline
 import android.os.Bundle
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
-import me.liwenkun.demo.demoframework.DemoBaseFragment
 import me.liwenkun.demo.R
+import me.liwenkun.demo.databinding.FragmentCustomViewBinding
+import me.liwenkun.demo.demoframework.DemoBaseFragment
 import me.liwenkun.demo.libannotation.Demo
-import me.liwenkun.demo.utils.DimensionUtils
+import me.liwenkun.demo.utils.px
 
 
 @Demo(title = "自定义小组件集合")
 class CustomViewFragment : DemoBaseFragment() {
 
+    private lateinit var binding: FragmentCustomViewBinding
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.activity_custom_view, container, false)
-        return view
+        return FragmentCustomViewBinding.inflate(inflater, container, false).also { binding = it }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val viewPager: ViewPager = view.findViewById(R.id.view_pager)
-        val indicator: Indicator = view.findViewById(R.id.indicator)
+        val viewPager: ViewPager = binding.viewPager
+        val indicator: Indicator = binding.indicator
         viewPager.adapter = object : PagerAdapter() {
             override fun getCount(): Int {
                 return 14
@@ -55,7 +61,7 @@ class CustomViewFragment : DemoBaseFragment() {
         ivOutline.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View?, outline: Outline?) {
                 if (view != null) {
-                    outline?.setRoundRect(0, 0, view.width, view.height, DimensionUtils.px(10).toFloat())
+                    outline?.setRoundRect(0, 0, view.width, view.height, px(10).toFloat())
                 }
             }
         }
@@ -72,7 +78,7 @@ class CustomViewFragment : DemoBaseFragment() {
         })
 
         val clipLayout: ClipLayout = view.findViewById(R.id.clip_layout)
-        val sbClip = view.findViewById<SeekBar>(R.id.sb_cilp)
+        val sbClip = view.findViewById<SeekBar>(R.id.sb_clip)
         sbClip.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 clipLayout.setClip(1 - progress.toFloat() / seekBar!!.max)

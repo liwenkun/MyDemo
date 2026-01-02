@@ -8,14 +8,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.StringRes
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import me.liwenkun.demo.App.Companion.get
+import me.liwenkun.demo.BaseActivity
 import me.liwenkun.demo.R
 import me.liwenkun.demo.demoframework.DemoBook.DemoItem
 import thereisnospon.codeview.CodeView
 import thereisnospon.codeview.CodeViewTheme
 
-open class DemoBaseActivity : AppCompatActivity(), Logger {
+open class DemoBaseActivity : BaseActivity(), Logger {
     private lateinit var logView: LogView
     private lateinit var contentView: ViewGroup
     private lateinit var codeView: CodeView
@@ -23,10 +27,13 @@ open class DemoBaseActivity : AppCompatActivity(), Logger {
     private lateinit var demoId: String
 
     private interface MenuItemState {
+        @get:StringRes
+        val desc: Int
         fun onClick(menuItem: MenuItem)
     }
 
     private val closeState: MenuItemState = object : MenuItemState {
+        override val desc = R.string.open_log_view
         override fun onClick(menuItem: MenuItem) {
             logView.visibility = View.VISIBLE
             menuItem.setTitle(R.string.close_log_view)
@@ -34,6 +41,7 @@ open class DemoBaseActivity : AppCompatActivity(), Logger {
         }
     }
     private val openState: MenuItemState = object : MenuItemState {
+        override val desc = R.string.close_log_view
         override fun onClick(menuItem: MenuItem) {
             logView.visibility = View.INVISIBLE
             menuItem.setTitle(R.string.open_log_view)
@@ -41,21 +49,21 @@ open class DemoBaseActivity : AppCompatActivity(), Logger {
         }
     }
     private val starState: MenuItemState = object : MenuItemState {
+        override val desc = R.string.has_star
         override fun onClick(menuItem: MenuItem) {
             menuItem.isEnabled = false
-            Thread {
+            CoroutineScope(Dispatchers.IO).launch {
                 demoItemDao.star(demoId, false)
-                runOnUiThread { menuItem.isEnabled = true }
-            }.start()
+            }
         }
     }
     private val unStarState: MenuItemState = object : MenuItemState {
+        override val desc = R.string.star
         override fun onClick(menuItem: MenuItem) {
             menuItem.isEnabled = false
-            Thread {
+            CoroutineScope(Dispatchers.IO).launch {
                 demoItemDao.star(demoId, true)
-                runOnUiThread { menuItem.isEnabled = true }
-            }.start()
+            }
         }
     }
     private var currentLogState = closeState
@@ -118,14 +126,13 @@ open class DemoBaseActivity : AppCompatActivity(), Logger {
         val menuItem = menu.findItem(R.id.menu_demo_star)
         demoItemDao.get(demoId).observe(this) { demoItem: DemoItem ->
             if (demoItem.isStarred) {
-                menuItem.setTitle(R.string.has_star)
-                menuItem.isEnabled = true
                 currentStarState = starState
+                menuItem.setTitle(currentStarState.desc)
             } else {
-                menuItem.setTitle(R.string.star)
-                menuItem.isEnabled = true
                 currentStarState = unStarState
+                menuItem.setTitle(currentStarState.desc)
             }
+            menuItem.isEnabled = true
         }
         return true
     }

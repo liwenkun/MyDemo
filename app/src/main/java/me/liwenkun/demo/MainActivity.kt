@@ -6,20 +6,19 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import me.liwenkun.demo.App.Companion.get
+import me.liwenkun.demo.databinding.ActivityMainBinding
 import me.liwenkun.demo.demoframework.DemoBaseActivity
 import me.liwenkun.demo.demoframework.DemoBook
 import me.liwenkun.demo.demoframework.DemoBook.DemoItem
 import me.liwenkun.demo.demoframework.DemoFragmentContainerActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var demoListAdapter: DemoListAdapter
     private lateinit var mainActivityModel: MainActivityModel
@@ -27,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private var menuItemBookmark: MenuItem? = null
     private val demoItemDao = get().appDatabase.demoItemDao()
     private val demoItemsInBookmark: LiveData<List<DemoItem>> = demoItemDao.getStarred()
+    private val binding: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val onBackPressedCallback = object: OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -37,13 +37,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
         mainActivityModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[MainActivityModel::class.java]
-        val rvDemoList = findViewById<RecyclerView>(R.id.demo_list)
-        rvDemoList.layoutManager = LinearLayoutManager(
+        binding.demoList.layoutManager = LinearLayoutManager(
             this,
             LinearLayoutManager.VERTICAL, false
         )
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             title = category.name
             onBackPressedCallback.isEnabled = category.parent != null
         }
-        rvDemoList.adapter = demoListAdapter
+        binding.demoList.adapter = demoListAdapter
 
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }

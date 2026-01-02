@@ -27,6 +27,7 @@
     <string name="title_home" translatable="false">Home</string>
     <string name="title_dashboard" translatable="false">Dashboard</string>
     <string name="title_notifications" translatable="false">Notifications</string>
+    <string name="select_picture_handle_app" translatable="false">选择图片处理应用</string>
     <string name="hello_world" translatable="false">Hello World!</string>
 <!--    <string name="hello_world" translatable="false">hello world from main module</string>-->
 </resources>

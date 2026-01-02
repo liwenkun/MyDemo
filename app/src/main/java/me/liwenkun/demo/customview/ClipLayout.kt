@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Path
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import androidx.core.graphics.withClip
 
 class ClipLayout @JvmOverloads constructor(
     context: Context,
@@ -28,9 +29,8 @@ class ClipLayout @JvmOverloads constructor(
         path.quadTo(x + height, height / 2f, x, height.toFloat())
         path.lineTo(0f, height.toFloat())
         path.lineTo(0f, 0f)
-        val count = canvas.save()
-        canvas.clipPath(path)
-        super.dispatchDraw(canvas)
-        canvas.restoreToCount(count)
+        canvas.withClip(path) {
+            super.dispatchDraw(canvas)
+        }
     }
 }

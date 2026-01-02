@@ -213,6 +213,7 @@ dependencies {
 
     implementation libs.retrofit
     implementation libs.retrofit.converter
+    implementation libs.retrofit.adapter
 
     implementation libs.dagger
     // 对 kotlin 源码使用注解处理器时，需要用 kapt 替换 annotationProcessor,
@@ -230,7 +231,6 @@ println(android.sourceSets.main.jniLibs.srcDirs)
 
 // 这种定义任务的 dsl 不符合 groovy 的语法, 是 Gradle 定制的 dsl，
 // 通过 TaskDefinitionScriptTransformer 实现，gradle 的语法是 groovy 语法的超集
-//task hello(type: tas) {
-//    println(it)
-//    while(true);
-//}
+task hello(type: Exec) {
+inputs.property("version", project.version)
+}
