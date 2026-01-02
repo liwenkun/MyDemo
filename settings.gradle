@@ -25,7 +25,7 @@ dependencyResolutionManagement {
             version("kotlin", "1.8.21")
             version("dagger", "2.46.1")
             version("retrofit", "2.9.0")
-            version("agp", "8.0.2")
+            version("agp", "8.9.1")
 
             library("room-runtime", "androidx.room", "room-runtime").versionRef("room")
             library("room-compiler", "androidx.room", "room-compiler").versionRef("room")

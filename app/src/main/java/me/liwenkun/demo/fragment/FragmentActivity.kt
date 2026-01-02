@@ -10,6 +10,8 @@ import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import me.liwenkun.demo.R
@@ -149,12 +151,27 @@ class FragmentActivity : DemoBaseActivity() {
         findViewById<View>(R.id.btn_commit).setOnClickListener { v: View ->
             if (transactionHelper.size() > 0) {
                 transactionHelper.commit(cbAddToBackStack.isChecked)
-                Handler(mainLooper).post { logFragmentInfo() }
             } else {
                 Toast.makeText(this@FragmentActivity, "操作隊列為空", Toast.LENGTH_SHORT).show()
             }
         }
         findViewById<View>(R.id.btn_clear_op).setOnClickListener { transactionHelper.cleanTransactionOp() }
+        
+        supportFragmentManager.addOnBackStackChangedListener(object:
+            FragmentManager.OnBackStackChangedListener {
+            override fun onBackStackChanged() {
+            }
+
+            override fun onBackStackChangeCommitted(fragment: Fragment, pop: Boolean) {
+                if (pop) {
+                    Handler(mainLooper).post { logFragmentInfo() }
+                }
+            }
+        })
+
+        supportFragmentManager.addFragmentOnAttachListener { _,_ ->
+            Handler(mainLooper).post { logFragmentInfo() }
+        }
     }
 
     private fun logFragmentInfo() {
@@ -179,13 +196,6 @@ class FragmentActivity : DemoBaseActivity() {
             "fragmentInfo->added: " + "{count: " + added.size
                     + ", fragments: " + added + "}"
         )
-    }
-
-    override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
-            Handler(mainLooper).post { logFragmentInfo() }
-        }
-        super.onBackPressed()
     }
 
     companion object {

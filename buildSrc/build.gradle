@@ -21,6 +21,6 @@ dependencies {
     implementation "org.ow2.asm:asm:9.5"
     implementation "org.ow2.asm:asm-util:9.5"
     implementation "org.ow2.asm:asm-commons:9.5"
-    implementation gradleApi() //必须
-    implementation localGroovy() //必须
+    compileOnly gradleApi() //必须
+    compileOnly localGroovy() //必须
 }
