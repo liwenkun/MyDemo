@@ -19,33 +19,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-    versionCatalogs {
-        libs {
-            version("room", "2.5.1")
-            version("kotlin", "1.8.21")
-            version("dagger", "2.46.1")
-            version("retrofit", "2.9.0")
-            version("agp", "8.9.1")
-
-            library("room-runtime", "androidx.room", "room-runtime").versionRef("room")
-            library("room-compiler", "androidx.room", "room-compiler").versionRef("room")
-
-            library("kotlin-stdlib", "org.jetbrains.kotlin", "kotlin-stdlib").versionRef("kotlin")
-            plugin("kotlin-android", "org.jetbrains.kotlin.android").versionRef("kotlin")
-            plugin("kapt", "org.jetbrains.kotlin.kapt").versionRef("kotlin")
-            plugin("kotlin", "org.jetbrains.kotlin.jvm").versionRef("kotlin")
-
-            library("dagger", "com.google.dagger", "dagger").versionRef("dagger")
-            library("dagger-compiler", "com.google.dagger", "dagger-compiler").versionRef("dagger")
-
-            library("retrofit", "com.squareup.retrofit2", "retrofit").versionRef("retrofit")
-            library("retrofit-converter", "com.squareup.retrofit2", "converter-gson").versionRef("retrofit")
-            library("retrofit-adapter", "com.squareup.retrofit2", "adapter-rxjava2").versionRef("retrofit")
-
-            plugin("android-application", "com.android.application").versionRef("agp")
-            plugin("android-library", "com.android.library").versionRef("agp")
-        }
-    }
 }
 
 include ':libcompiler'

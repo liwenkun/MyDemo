@@ -1,13 +1,28 @@
+import com.android.build.gradle.AppPlugin
 // plugin 代码块会被 gradle 单独处理。原因是：编译以及运行脚本的时候，脚本是不知道到插件中的类的，这时会出现找不到类的错误。
 // 为了解决这个问题，gradle 单独处理 plugins 中的代码，解析出插件，将插件作为脚本编译和运行的依赖，这样脚本就能正常
 // 编译运行了，因此我们在脚本中能正常使用脚本中定义类。
 plugins {
-    // 插件会被顺序添加到一个公共的类加载器中，所以后应用的插件能够使用先应用插件的中的类。
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kapt)
-//    id 'me.liwenkun.custom-plugin'
 }
+println "-------------- app project classloader hierarchy start -----------------"
+ClassLoader classLoader = this.class.classLoader;
+while (classLoader != null) {
+    println classLoader
+    classLoader = classLoader.parent
+}
+
+println "-------------- app project classloader hierarchy end -----------------"
+
+println "-------------- plugin project classloader hierarchy start -----------------"
+classLoader = AppPlugin.classLoader
+while (classLoader != null) {
+    println classLoader
+    classLoader = classLoader.parent
+}
+println "-------------- plugin project classloader hierarchy end -----------------"
 
 // 1. gradle 的 jdk 是通过 IDE->settings->gradle-> jdk 设置的，这个 jdk 用来运行 gradle 框架和 gradle 脚本，
 // 这个 jdk 也可以通过 org.gradle.java.home 属性进行指定。
@@ -24,12 +39,18 @@ plugins {
 // 3. jvm toolchain 和 jdk 这两个概念差不多是等价的，可以互换。
 
 android {
-    compileSdk 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId "me.liwenkun.demo"
-        minSdk 23
-        targetSdk 36
+        minSdk {
+            version = release(23)
+        }
+        targetSdk {
+            version = release(36)
+        }
         versionCode 1
         versionName "1.0"
 
@@ -231,6 +252,6 @@ println(android.sourceSets.main.jniLibs.srcDirs)
 
 // 这种定义任务的 dsl 不符合 groovy 的语法, 是 Gradle 定制的 dsl，
 // 通过 TaskDefinitionScriptTransformer 实现，gradle 的语法是 groovy 语法的超集
-task hello(type: Exec) {
-inputs.property("version", project.version)
+task hello {
+//    inputs.property("version", project.version)
 }

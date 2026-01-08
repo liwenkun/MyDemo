@@ -1,7 +1,10 @@
 import java.lang.management.ManagementFactory
 
-// 已经使用了 alias，就没必要在根项目中使用 plugins 块了，根项目 plugins 块本意是为了保持版本一致
 plugins {
+    // alias 就是 id xxx version xxx 的简写形式
+    // 同一个 plugins{} 块中声明的插件会被顺序添加到同一个的类加载器中，所以这里的插件能够互相访问各自定义的类。
+    // 有一个例外，就是 buildSrc 中的插件，它会在更高级别类加载器中加载，因此我们在各个构建脚本中使用 buildSrc 中定义的类(除了 settings.gradle)。
+    id("me.liwenkun.readme-process")
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
@@ -9,6 +12,15 @@ plugins {
     alias(libs.plugins.kapt) apply false
 }
 
+println "-------------- root project classloader hierarchy start -----------------"
+ClassLoader classLoader = this.class.classLoader;
+while (classLoader != null) {
+    println classLoader
+    classLoader = classLoader.parent
+}
+println "-------------- root project classloader hierarchy end -----------------"
+
+//https://discuss.gradle.org/t/depending-on-types-of-a-3rd-party-plugin-in-buildsrc/49453
 tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }
@@ -28,3 +40,7 @@ def name = runtime.name
 def pid = name.substring(0, name.indexOf("@")).toLong()
 println("gradle 所在进程 Pid: $pid")
 println("gradle vm 版本: ${System.getProperty("java.version")}")
+
+MyPlugin {
+    outputFile = layout.buildDirectory.file("M_README.md")
+}

@@ -1,5 +1,10 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id 'java-library'
+    // 1. 允许在 buildSrc 中编写 Kotlin 代码
+    id 'org.jetbrains.kotlin.jvm' version '1.8.10'
+    // 2. 只有加上这个，你定义的插件才能被主项目识别
+    id 'java-gradle-plugin'
 }
 
 // 这里设置为 17 其实也没有任何问题，因为 buildSrc 的代码是作为插件运行在 gradle 的 build 脚本中的，gradle 的 jdk 是 17
@@ -10,17 +15,30 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+}
+
 repositories {
     google()
     mavenCentral() //必须
 }
 
+gradlePlugin {
+    plugins {
+        readmeProcess {
+            id = 'me.liwenkun.readme-process'
+            implementationClass = 'me.liwenkun.buildSrc.MyPlugin'
+        }
+    }
+}
+
+
 dependencies {
-    compileOnly 'com.android.tools.build:gradle:8.1.0'
-    implementation "org.ow2.asm:asm:9.5"
-    implementation "org.ow2.asm:asm:9.5"
-    implementation "org.ow2.asm:asm-util:9.5"
-    implementation "org.ow2.asm:asm-commons:9.5"
-    compileOnly gradleApi() //必须
-    compileOnly localGroovy() //必须
+    compileOnly libs.gradle
+    implementation libs.asm
+    implementation libs.asm.util
+    implementation libs.asm.commons
 }
